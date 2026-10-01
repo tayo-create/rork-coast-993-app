@@ -12,7 +12,11 @@ final class MusicTestViewModel {
     private(set) var clipProgress: Double = 0
     private(set) var clipError: String?
     private(set) var isFinished: Bool = false
-    private(set) var pointsAwarded: Int = 0
+    private(set) var uploadState: UploadState = .idle
+
+    enum UploadState: Equatable {
+        case idle, sending, sent, failed
+    }
 
     static let clipLength: Double = 15
 
@@ -29,6 +33,15 @@ final class MusicTestViewModel {
     var progress: Double { Double(submittedCount) / Double(songs.count) }
     var canGoBack: Bool { index > 0 }
     var canGoForward: Bool { index < songs.count - 1 }
+
+    init() {
+        answers = MusicTestService.loadAnswers()
+        if submittedCount == songs.count {
+            isFinished = true
+        } else if let firstOpen = songs.indices.first(where: { answers[songs[$0].id]?.isSubmitted != true }) {
+            index = firstOpen
+        }
+    }
 
     func artworkURL(for song: MusicTestSong) -> URL? { previews[song.id]?.largeArtworkURL }
 
@@ -58,6 +71,8 @@ final class MusicTestViewModel {
     func submit() -> Bool {
         guard currentAnswer.isComplete else { return false }
         update { $0.isSubmitted = true }
+        MusicTestService.saveAnswers(answers)
+        Task { await uploadAnswers() }
         if submittedCount == songs.count {
             stopClip()
             isFinished = true
@@ -70,7 +85,17 @@ final class MusicTestViewModel {
         return false
     }
 
-    func markAwarded(_ points: Int) { pointsAwarded = points }
+    /// Sends all submitted answers to the station; safe to call repeatedly (server upserts).
+    func uploadAnswers() async {
+        uploadState = .sending
+        do {
+            try await MusicTestService.upload(answers, songs: songs)
+            uploadState = .sent
+        } catch {
+            print("[MusicTest] upload failed: \(error.localizedDescription)")
+            uploadState = .failed
+        }
+    }
 
     func next() { if canGoForward { go(to: index + 1) } }
     func previous() { if canGoBack { go(to: index - 1) } }
@@ -83,9 +108,10 @@ final class MusicTestViewModel {
     func restart() {
         stopClip()
         answers = [:]
+        MusicTestService.clearAnswers()
         index = 0
         isFinished = false
-        pointsAwarded = 0
+        uploadState = .idle
     }
 
     // MARK: - Clip playback

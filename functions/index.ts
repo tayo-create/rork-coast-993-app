@@ -1,8 +1,9 @@
-// Coast 99.3 backend: synced Coast Rewards accounts + contest keyword push alerts.
+// Coast 99.3 backend: contest keyword push alerts + anonymous Music Test results.
 import { adminPage } from "./admin-page";
 import type { ApnsEnv } from "./apns";
 
 export { PushHub } from "./push-hub";
+// Accounts are disabled in the app; the class stays exported so existing Durable Object storage remains valid.
 export { RewardsAccount } from "./rewards-account";
 
 type Env = ApnsEnv & {
@@ -25,7 +26,7 @@ function json(data: unknown, status = 200): Response {
 
 async function toDO(
   env: Env,
-  className: "PushHub" | "RewardsAccount",
+  className: "PushHub",
   id: string,
   path: string,
   init: { method: string; body?: string; headers?: Record<string, string> },
@@ -47,16 +48,6 @@ async function toDO(
   });
 }
 
-function identityHeaders(request: Request, userId: string | null): Record<string, string> {
-  const headers: Record<string, string> = {};
-  if (userId) headers["X-Coast-User-Id"] = userId;
-  const email = request.headers.get("X-Rork-User-Email");
-  const name = request.headers.get("X-Rork-User-Name");
-  if (email) headers["X-Coast-User-Email"] = email;
-  if (name) headers["X-Coast-User-Name"] = name;
-  return headers;
-}
-
 function isAdmin(request: Request, env: Env): boolean {
   const expected = env.COAST_ADMIN_KEY?.trim();
   if (!expected) return false;
@@ -73,8 +64,6 @@ export default {
 
     const url = new URL(request.url);
     const path = url.pathname.replace(/\/+$/, "") || "/";
-    // Stamped by the platform only when a valid Rork Auth bearer token was sent.
-    const userId = request.headers.get("X-Rork-User-Id");
 
     try {
       // ---- Public ----
@@ -84,37 +73,17 @@ export default {
         return toDO(env, "PushHub", "global", "/keywords", { method: "GET" });
       }
 
-      // ---- Push device registration (guest or signed in) ----
+      // ---- Anonymous Music Test answers ----
+      if (path === "/music-test" && request.method === "POST") {
+        return toDO(env, "PushHub", "global", "/music-test", { method: "POST", body: await request.text() });
+      }
+
+      // ---- Push device registration (anonymous) ----
       if (path === "/push/register" && request.method === "POST") {
-        return toDO(env, "PushHub", "global", "/register", {
-          method: "POST",
-          body: await request.text(),
-          headers: identityHeaders(request, userId),
-        });
+        return toDO(env, "PushHub", "global", "/register", { method: "POST", body: await request.text() });
       }
       if (path === "/push/unregister" && request.method === "POST") {
         return toDO(env, "PushHub", "global", "/unregister", { method: "POST", body: await request.text() });
-      }
-
-      // ---- Account (requires sign-in) ----
-      if (path === "/me" || path === "/rewards/sync" || path === "/account") {
-        if (!userId) return json({ error: "Please sign in again." }, 401);
-        const headers = identityHeaders(request, userId);
-
-        if (path === "/me" && request.method === "GET") {
-          return toDO(env, "RewardsAccount", userId, "/state", { method: "GET", headers });
-        }
-        if (path === "/rewards/sync" && request.method === "POST") {
-          return toDO(env, "RewardsAccount", userId, "/sync", {
-            method: "POST",
-            body: await request.text(),
-            headers,
-          });
-        }
-        if (path === "/account" && request.method === "DELETE") {
-          await toDO(env, "PushHub", "global", "/unlink-user", { method: "POST", body: "{}", headers });
-          return toDO(env, "RewardsAccount", userId, "/delete", { method: "POST", body: "{}", headers });
-        }
       }
 
       // ---- Station admin: announce a keyword to every opted-in device ----
@@ -127,6 +96,9 @@ export default {
 
         if (path === "/admin/stats" && request.method === "GET") {
           return toDO(env, "PushHub", "global", "/stats", { method: "GET" });
+        }
+        if (path === "/admin/music-test" && request.method === "GET") {
+          return toDO(env, "PushHub", "global", "/music-test/results", { method: "GET" });
         }
         if (path === "/admin/announce" && request.method === "POST") {
           return toDO(env, "PushHub", "global", "/announce", { method: "POST", body: await request.text() });

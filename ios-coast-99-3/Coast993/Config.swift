@@ -10,15 +10,9 @@
 import Foundation
 
 enum Config {
-    nonisolated static let EXPO_PUBLIC_PROJECT_ID = ""
-    nonisolated static let EXPO_PUBLIC_RORK_APP_KEY = ""
-    nonisolated static let EXPO_PUBLIC_RORK_AUTH_URL = ""
     nonisolated static let EXPO_PUBLIC_RORK_FUNCTIONS_URL = ""
 
     nonisolated static let allValues: [String: String] = [
-        "EXPO_PUBLIC_PROJECT_ID": EXPO_PUBLIC_PROJECT_ID,
-        "EXPO_PUBLIC_RORK_APP_KEY": EXPO_PUBLIC_RORK_APP_KEY,
-        "EXPO_PUBLIC_RORK_AUTH_URL": EXPO_PUBLIC_RORK_AUTH_URL,
         "EXPO_PUBLIC_RORK_FUNCTIONS_URL": EXPO_PUBLIC_RORK_FUNCTIONS_URL,
     ]
 }

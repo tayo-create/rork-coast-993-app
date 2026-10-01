@@ -24,6 +24,33 @@ export type AnnounceInput = {
 };
 
 const TOKEN_PATTERN = /^[0-9a-f]{64,200}$/i;
+const SUBMISSION_PATTERN = /^[0-9a-f-]{16,64}$/i;
+const FEELINGS = new Set(["love", "like", "ok", "dislike", "never"]);
+const FAMILIARITY = new Set(["veryWell", "know", "heard", "dontKnow"]);
+const FREQUENCY = new Set(["aLot", "sometimes", "aLittle", "rarely", "never"]);
+
+type MusicTestAnswerInput = {
+  songId?: number;
+  artist?: string;
+  title?: string;
+  feeling?: string;
+  familiarity?: string;
+  frequency?: string;
+};
+
+type MusicTestRow = {
+  song_id: number;
+  artist: string;
+  title: string;
+  votes: number;
+  love: number;
+  liked: number;
+  ok: number;
+  disliked: number;
+  never_play: number;
+  familiar: number;
+  play_more: number;
+};
 
 /** Singleton ("global") registry of device tokens + keyword announcements. */
 export class PushHub extends DurableObject<Env> {
@@ -48,6 +75,20 @@ export class PushHub extends DurableObject<Env> {
         created_at INTEGER NOT NULL,
         delivered INTEGER NOT NULL DEFAULT 0,
         failed INTEGER NOT NULL DEFAULT 0
+      )
+    `);
+    this.ctx.storage.sql.exec(`
+      CREATE TABLE IF NOT EXISTS music_test_responses (
+        submission_id TEXT NOT NULL,
+        test_id TEXT NOT NULL,
+        song_id INTEGER NOT NULL,
+        artist TEXT NOT NULL,
+        title TEXT NOT NULL,
+        feeling TEXT NOT NULL,
+        familiarity TEXT NOT NULL,
+        frequency TEXT NOT NULL,
+        updated_at INTEGER NOT NULL,
+        PRIMARY KEY (submission_id, test_id, song_id)
       )
     `);
   }
@@ -97,17 +138,25 @@ export class PushHub extends DurableObject<Env> {
       return Response.json({ keywords: this.recentKeywords(10) });
     }
 
+    if (request.method === "POST" && url.pathname === "/music-test") {
+      return this.saveMusicTest(await request.json());
+    }
+
+    if (request.method === "GET" && url.pathname === "/music-test/results") {
+      return Response.json(this.musicTestResults());
+    }
+
     if (request.method === "GET" && url.pathname === "/stats") {
       const devices = this.ctx.storage.sql
-        .exec<{ total: number; alerts: number; accounts: number }>(
-          `SELECT COUNT(*) AS total,
-                  COALESCE(SUM(alerts), 0) AS alerts,
-                  COUNT(DISTINCT user_id) AS accounts
-           FROM devices`,
+        .exec<{ total: number; alerts: number }>(
+          `SELECT COUNT(*) AS total, COALESCE(SUM(alerts), 0) AS alerts FROM devices`,
         )
         .one();
+      const takers = this.ctx.storage.sql
+        .exec<{ takers: number }>("SELECT COUNT(DISTINCT submission_id) AS takers FROM music_test_responses")
+        .one();
       return Response.json({
-        devices,
+        devices: { ...devices, testTakers: takers.takers },
         apnsConfigured: apnsConfigured(this.env),
         keywords: this.recentKeywords(10),
       });
@@ -119,6 +168,76 @@ export class PushHub extends DurableObject<Env> {
     }
 
     return new Response("not found", { status: 404 });
+  }
+
+  /** Upserts anonymous Music Test answers (one row per submission + song). */
+  private saveMusicTest(raw: unknown): Response {
+    const body = (raw ?? {}) as { submissionId?: string; testId?: string; answers?: MusicTestAnswerInput[] };
+    const submissionId = (body.submissionId ?? "").trim();
+    const testId = (body.testId ?? "").trim().slice(0, 40);
+    if (!SUBMISSION_PATTERN.test(submissionId) || !testId) {
+      return Response.json({ error: "Invalid submission" }, { status: 400 });
+    }
+    const answers = Array.isArray(body.answers) ? body.answers.slice(0, 20) : [];
+    let saved = 0;
+    for (const answer of answers) {
+      const songId = Number(answer.songId);
+      if (!Number.isInteger(songId) || songId <= 0) continue;
+      if (!FEELINGS.has(answer.feeling ?? "") || !FAMILIARITY.has(answer.familiarity ?? "") || !FREQUENCY.has(answer.frequency ?? "")) continue;
+      this.ctx.storage.sql.exec(
+        `INSERT INTO music_test_responses
+           (submission_id, test_id, song_id, artist, title, feeling, familiarity, frequency, updated_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+         ON CONFLICT(submission_id, test_id, song_id) DO UPDATE SET
+           feeling = excluded.feeling,
+           familiarity = excluded.familiarity,
+           frequency = excluded.frequency,
+           updated_at = excluded.updated_at`,
+        submissionId,
+        testId,
+        songId,
+        String(answer.artist ?? "").slice(0, 120),
+        String(answer.title ?? "").slice(0, 160),
+        answer.feeling,
+        answer.familiarity,
+        answer.frequency,
+        Date.now(),
+      );
+      saved += 1;
+    }
+    if (saved === 0) return Response.json({ error: "No valid answers" }, { status: 400 });
+    return Response.json({ ok: true, saved });
+  }
+
+  private musicTestResults() {
+    const rows = this.ctx.storage.sql
+      .exec<MusicTestRow>(
+        `SELECT song_id, MAX(artist) AS artist, MAX(title) AS title, COUNT(*) AS votes,
+                SUM(feeling = 'love') AS love, SUM(feeling = 'like') AS liked, SUM(feeling = 'ok') AS ok,
+                SUM(feeling = 'dislike') AS disliked, SUM(feeling = 'never') AS never_play,
+                SUM(familiarity IN ('veryWell', 'know')) AS familiar,
+                SUM(frequency IN ('aLot', 'sometimes')) AS play_more
+         FROM music_test_responses
+         GROUP BY song_id`,
+      )
+      .toArray();
+    const songs = rows
+      .map((r) => {
+        const votes = Math.max(r.votes, 1);
+        const score = (r.love * 5 + r.liked * 4 + r.ok * 3 + r.disliked * 2 + r.never_play) / votes;
+        return {
+          songId: r.song_id,
+          artist: r.artist,
+          title: r.title,
+          votes: r.votes,
+          score: Math.round(score * 10) / 10,
+          positivePct: Math.round(((r.love + r.liked) / votes) * 100),
+          familiarPct: Math.round((r.familiar / votes) * 100),
+          playMorePct: Math.round((r.play_more / votes) * 100),
+        };
+      })
+      .sort((a, b) => b.score - a.score || b.votes - a.votes);
+    return { songs };
   }
 
   private recentKeywords(limit: number) {

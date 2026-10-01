@@ -18,13 +18,9 @@ final class RadioPlayer {
 
     var isPlaying: Bool { status == .playing || status == .connecting }
 
-    /// Called every ~15s of actual listening so rewards can track Daily Listen.
-    var onListenTick: ((Double) -> Void)?
-
     private var player: AVPlayer?
     private var statusObservation: NSKeyValueObservation?
     private var pollTask: Task<Void, Never>?
-    private var listenTask: Task<Void, Never>?
     private var nowPlayingArtwork: MPMediaItemArtwork?
     private var hasConfiguredRemote: Bool = false
 
@@ -110,10 +106,8 @@ final class RadioPlayer {
                 guard let self else { return }
                 if itemFailed {
                     self.status = .failed
-                    self.stopListenTimer()
                 } else if control == .playing {
                     self.status = .playing
-                    self.startListenTimer()
                 } else if control == .waitingToPlayAtSpecifiedRate, self.status != .idle {
                     self.status = .connecting
                 }
@@ -129,24 +123,7 @@ final class RadioPlayer {
         statusObservation = nil
         player = nil
         status = .idle
-        stopListenTimer()
         updateNowPlayingInfo()
-    }
-
-    private func startListenTimer() {
-        guard listenTask == nil else { return }
-        listenTask = Task { [weak self] in
-            while !Task.isCancelled {
-                try? await Task.sleep(for: .seconds(15))
-                guard !Task.isCancelled, let self, self.status == .playing else { continue }
-                self.onListenTick?(15)
-            }
-        }
-    }
-
-    private func stopListenTimer() {
-        listenTask?.cancel()
-        listenTask = nil
     }
 
     // MARK: - System integration

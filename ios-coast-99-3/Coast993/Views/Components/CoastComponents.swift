@@ -1,5 +1,4 @@
 import SwiftUI
-import UIKit
 
 /// Deep night backdrop with soft bridge-light glows.
 struct AppBackground: View {
@@ -64,62 +63,6 @@ struct CoastHeader: View {
             .accessibilityAddTraits(.isHeader)
         }
         .frame(height: height)
-        .overlay(alignment: .topTrailing) {
-            AccountButton()
-                .padding(.top, UIApplication.shared.keyWindowTopInset + 4)
-                .padding(.trailing, 16)
-        }
-    }
-}
-
-/// Floating avatar / sign-in button shown on every tab header.
-struct AccountButton: View {
-    @Environment(AuthManager.self) private var auth
-    @Environment(AppRouter.self) private var router
-    @Environment(RewardsStore.self) private var rewards
-
-    var body: some View {
-        Button {
-            router.openAccount(isSignedIn: auth.isSignedIn)
-        } label: {
-            Group {
-                if let user = auth.user {
-                    HStack(spacing: 6) {
-                        Text(user.initials)
-                            .font(CoastFont.condensed(15))
-                            .foregroundStyle(.white)
-                            .frame(width: 30, height: 30)
-                            .background(Circle().fill(Theme.orangeGradient))
-                        Text("\(rewards.points)")
-                            .font(CoastFont.condensed(16))
-                            .foregroundStyle(.white)
-                            .contentTransition(.numericText(value: Double(rewards.points)))
-                            .padding(.trailing, 6)
-                    }
-                    .padding(4)
-                } else {
-                    HStack(spacing: 6) {
-                        Image(systemName: "person.crop.circle.fill")
-                            .font(.system(size: 18, weight: .semibold))
-                        Text("SIGN IN")
-                            .font(CoastFont.condensed(15))
-                            .tracking(0.8)
-                    }
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, 12)
-                    .frame(height: 38)
-                }
-            }
-            .background(Capsule().fill(Theme.canvas.opacity(0.55)))
-            .background(.ultraThinMaterial, in: Capsule())
-            .overlay(Capsule().strokeBorder(.white.opacity(0.18), lineWidth: 1))
-            .frame(minHeight: 44)
-            .contentShape(Capsule())
-        }
-        .buttonStyle(PressableStyle())
-        .opacity(auth.isLoading ? 0 : 1)
-        .animation(.spring(response: 0.4, dampingFraction: 0.8), value: auth.user)
-        .accessibilityLabel(auth.isSignedIn ? "Account, \(rewards.points) points" : "Sign in or create account")
     }
 }
 

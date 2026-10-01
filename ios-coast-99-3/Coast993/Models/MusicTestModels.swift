@@ -82,7 +82,7 @@ nonisolated enum SongFrequency: String, CaseIterable, Identifiable, Codable, Sen
     }
 }
 
-nonisolated struct SongAnswer: Hashable, Sendable {
+nonisolated struct SongAnswer: Hashable, Codable, Sendable {
     var feeling: SongFeeling?
     var familiarity: SongFamiliarity?
     var frequency: SongFrequency?
@@ -92,6 +92,9 @@ nonisolated struct SongAnswer: Hashable, Sendable {
 }
 
 nonisolated enum MusicTestCatalog {
+    /// Changes whenever the song list changes so results are grouped per test.
+    static let testID: String = "2026-10-week1"
+
     /// This week's test — iTunes track IDs supply the preview clips and cover art.
     static let songs: [MusicTestSong] = [
         MusicTestSong(id: 386153478, artist: "Usher", title: "Yeah! (feat. Lil Jon & Ludacris)"),

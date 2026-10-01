@@ -3,7 +3,6 @@ import SwiftUI
 struct MusicTestView: View {
     @Binding var selectedTab: AppTab
     @Environment(RadioPlayer.self) private var radio
-    @Environment(RewardsStore.self) private var rewards
     @State private var viewModel: MusicTestViewModel = MusicTestViewModel()
     @State private var selectionTrigger: Int = 0
     @State private var submitTrigger: Int = 0
@@ -16,8 +15,9 @@ struct MusicTestView: View {
                 VStack(spacing: 14) {
                     if viewModel.isFinished {
                         MusicTestCompleteCard(
-                            pointsAwarded: viewModel.pointsAwarded,
-                            onViewRewards: { selectedTab = .rewards },
+                            uploadState: viewModel.uploadState,
+                            onRetry: { Task { await viewModel.uploadAnswers() } },
+                            onKeepListening: { selectedTab = .live },
                             onRetake: { withAnimation(.smooth) { viewModel.restart() } }
                         )
                         .transition(.scale(scale: 0.9).combined(with: .opacity))
@@ -145,9 +145,7 @@ struct MusicTestView: View {
                 Button {
                     submitTrigger += 1
                     withAnimation(.smooth) {
-                        if viewModel.submit() {
-                            viewModel.markAwarded(rewards.completeMusicTest())
-                        }
+                        viewModel.submit()
                     }
                 } label: {
                     PrimaryCapsuleLabel(title: "SUBMIT MY ANSWERS", systemImage: nil, height: 52, isEnabled: isComplete)
@@ -321,8 +319,9 @@ private struct OptionTile<Icon: View>: View {
 }
 
 private struct MusicTestCompleteCard: View {
-    let pointsAwarded: Int
-    let onViewRewards: () -> Void
+    let uploadState: MusicTestViewModel.UploadState
+    let onRetry: () -> Void
+    let onKeepListening: () -> Void
     let onRetake: () -> Void
     @State private var appeared: Bool = false
 
@@ -348,22 +347,10 @@ private struct MusicTestCompleteCard: View {
                 .foregroundStyle(Theme.textSecondary)
                 .multilineTextAlignment(.center)
 
-            if pointsAwarded > 0 {
-                Text("+\(pointsAwarded) POINTS")
-                    .font(CoastFont.display(30))
-                    .foregroundStyle(Theme.orange)
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 8)
-                    .background(Capsule().fill(Theme.orange.opacity(0.14)))
-            } else {
-                Text("You've already earned today's Music Test points. Come back tomorrow for more!")
-                    .font(.footnote.weight(.semibold))
-                    .foregroundStyle(Theme.blueSoft)
-                    .multilineTextAlignment(.center)
-            }
+            uploadStatus
 
-            Button(action: onViewRewards) {
-                PrimaryCapsuleLabel(title: "VIEW MY REWARDS")
+            Button(action: onKeepListening) {
+                PrimaryCapsuleLabel(title: "KEEP LISTENING LIVE")
             }
             .buttonStyle(PressableStyle())
             .padding(.top, 4)
@@ -378,6 +365,27 @@ private struct MusicTestCompleteCard: View {
         .padding(.top, 8)
         .onAppear {
             withAnimation(.spring(response: 0.5, dampingFraction: 0.6)) { appeared = true }
+        }
+    }
+
+    @ViewBuilder
+    private var uploadStatus: some View {
+        switch uploadState {
+        case .sending:
+            Label("Sending your answers to Coast 99.3…", systemImage: "arrow.up.circle")
+                .font(.footnote.weight(.semibold))
+                .foregroundStyle(Theme.textSecondary)
+        case .failed:
+            Button(action: onRetry) {
+                Label("Couldn't send your answers. Tap to retry.", systemImage: "arrow.clockwise")
+                    .font(.footnote.weight(.semibold))
+                    .foregroundStyle(Theme.orange)
+                    .frame(minHeight: 44)
+            }
+        case .idle, .sent:
+            Label("Your answers were sent to the station.", systemImage: "checkmark.circle.fill")
+                .font(.footnote.weight(.semibold))
+                .foregroundStyle(Theme.blueSoft)
         }
     }
 }

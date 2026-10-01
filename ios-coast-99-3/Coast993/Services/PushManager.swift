@@ -16,7 +16,7 @@ final class PushManager {
     private(set) var latestKeyword: KeywordAlert?
     private(set) var isRegisteredWithBackend: Bool = false
 
-    /// Set when the listener taps a keyword push; the root view routes to Contests.
+    /// Set when the listener taps a keyword push; the root view shows the keyword sheet.
     var openedKeyword: KeywordAlert?
 
     /// Listener's in-app preference (separate from the iOS permission).
@@ -26,9 +26,6 @@ final class PushManager {
             Task { await registerWithBackend() }
         }
     }
-
-    /// Supplies the signed-in user's bearer token so devices link to accounts.
-    var tokenProvider: (() async -> String?)?
 
     var isReceivingAlerts: Bool { permission == .authorized && alertsEnabled }
 
@@ -100,13 +97,12 @@ final class PushManager {
         print("[Push] APNs registration failed: \(error.localizedDescription)")
     }
 
-    /// Upserts this device with the backend; links it to the signed-in account when available.
+    /// Upserts this device with the backend so it receives keyword alerts.
     func registerWithBackend() async {
         guard let deviceToken else { return }
-        let token = await tokenProvider?()
         let body = RegisterBody(token: deviceToken, environment: pushEnvironment, alertsEnabled: alertsEnabled)
         do {
-            _ = try await BackendClient.send("push/register", method: "POST", body: body, token: token, as: OKResponse.self)
+            _ = try await BackendClient.send("push/register", method: "POST", body: body, as: OKResponse.self)
             isRegisteredWithBackend = true
         } catch {
             print("[Push] backend registration failed: \(error.localizedDescription)")

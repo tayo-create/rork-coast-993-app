@@ -4,7 +4,7 @@ export const adminPage = `<!doctype html>
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Coast 99.3 · Keyword Alerts</title>
+<title>Coast 99.3 · Station Console</title>
 <style>
   :root { --bg:#050A1A; --surface:#0E1730; --raised:#14214A; --border:#1E3A8A; --orange:#FF7A1A; --blue:#1F6BFF; --muted:#9AA7C7; }
   * { box-sizing: border-box; }
@@ -34,12 +34,17 @@ export const adminPage = `<!doctype html>
   li:last-child { border-bottom:0; }
   li span { color:var(--muted); font-size:14px; }
   .warn { color:#FFB35C; font-size:14px; margin-top:10px; display:none; }
+  table { width:100%; border-collapse:collapse; font-size:14px; }
+  th { text-align:left; color:var(--muted); font-weight:600; font-size:12px; letter-spacing:.8px; text-transform:uppercase; padding:6px 4px; }
+  td { padding:10px 4px; border-top:1px solid rgba(30,58,138,.5); vertical-align:top; }
+  td.num { text-align:right; font-variant-numeric:tabular-nums; }
+  td small { color:var(--muted); display:block; }
 </style>
 </head>
 <body>
 <main>
   <h1>Coast <span>99.3</span></h1>
-  <p class="sub">Keyword Alerts · push a keyword to every listener with alerts on.</p>
+  <p class="sub">Keyword Alerts &amp; Music Test results.</p>
 
   <div class="card">
     <label for="key">Admin key</label>
@@ -47,7 +52,7 @@ export const adminPage = `<!doctype html>
     <div class="stats" style="margin-top:16px">
       <div class="stat"><b id="sDevices">–</b><small>devices</small></div>
       <div class="stat"><b id="sAlerts">–</b><small>alerts on</small></div>
-      <div class="stat"><b id="sAccounts">–</b><small>accounts</small></div>
+      <div class="stat"><b id="sTakers">–</b><small>test takers</small></div>
     </div>
     <div class="warn" id="apnsWarn">Apple push credentials are not configured yet — keywords will be saved and shown in the app, but no push will be sent.</div>
   </div>
@@ -70,6 +75,14 @@ export const adminPage = `<!doctype html>
     <label style="margin-top:0">Recent keywords</label>
     <ul id="recent"><li><span>Enter your admin key to load.</span></li></ul>
   </div>
+
+  <div class="card">
+    <label style="margin-top:0">Music Test results</label>
+    <table>
+      <thead><tr><th>Song</th><th style="text-align:right">Score</th><th style="text-align:right">Like</th><th style="text-align:right">More</th></tr></thead>
+      <tbody id="music"><tr><td colspan="4"><small>Enter your admin key to load.</small></td></tr></tbody>
+    </table>
+  </div>
 </main>
 <script>
   const $ = (id) => document.getElementById(id);
@@ -85,11 +98,22 @@ export const adminPage = `<!doctype html>
     if (!res.ok) { $("recent").innerHTML = "<li><span>" + esc(data.error) + "</span></li>"; return; }
     $("sDevices").textContent = data.devices.total;
     $("sAlerts").textContent = data.devices.alerts;
-    $("sAccounts").textContent = data.devices.accounts;
+    $("sTakers").textContent = data.devices.testTakers;
     $("apnsWarn").style.display = data.apnsConfigured ? "none" : "block";
     $("recent").innerHTML = data.keywords.length ? data.keywords.map((k) =>
       "<li><b>" + esc(k.keyword) + "</b><span>" + new Date(k.createdAt).toLocaleString() + " · " + k.delivered + " sent</span></li>").join("")
       : "<li><span>No keywords yet.</span></li>";
+    loadMusicTest();
+  }
+
+  async function loadMusicTest() {
+    const res = await fetch("admin/music-test", { headers: headers() });
+    const data = await res.json();
+    if (!res.ok) return;
+    $("music").innerHTML = data.songs.length ? data.songs.map((s) =>
+      "<tr><td><b>" + esc(s.title) + "</b><small>" + esc(s.artist) + " · " + s.votes + " votes · " + s.familiarPct + "% know it</small></td>" +
+      "<td class='num'>" + s.score.toFixed(1) + "</td><td class='num'>" + s.positivePct + "%</td><td class='num'>" + s.playMorePct + "%</td></tr>").join("")
+      : "<tr><td colspan='4'><small>No Music Test answers yet.</small></td></tr>";
   }
 
   $("key").addEventListener("change", loadStats);

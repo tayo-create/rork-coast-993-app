@@ -3,7 +3,6 @@ import SwiftUI
 struct LiveView: View {
     @Binding var selectedTab: AppTab
     @Environment(RadioPlayer.self) private var radio
-    @Environment(RewardsStore.self) private var rewards
     @Environment(ArtworkCache.self) private var artwork
 
     var body: some View {
@@ -20,7 +19,7 @@ struct LiveView: View {
 
                         recentlyPlayed
 
-                        RewardsBanner(points: rewards.points) {
+                        MusicTestBanner {
                             selectedTab = .musicTest
                         }
                     }
@@ -249,26 +248,24 @@ struct TrackRow: View {
     }
 }
 
-private struct RewardsBanner: View {
-    let points: Int
+private struct MusicTestBanner: View {
     let action: () -> Void
 
     var body: some View {
         HStack(spacing: 14) {
             ZStack {
                 Circle().fill(Theme.orange.opacity(0.18))
-                Image(systemName: "trophy.fill")
+                Image(systemName: "music.note.list")
                     .font(.system(size: 22, weight: .semibold))
                     .foregroundStyle(Theme.orange)
             }
             .frame(width: 52, height: 52)
 
             VStack(alignment: .leading, spacing: 2) {
-                Text("\(points) pts")
-                    .font(CoastFont.display(24))
+                Text("YOUR VOICE")
+                    .font(CoastFont.display(22))
                     .foregroundStyle(.white)
-                    .contentTransition(.numericText(value: Double(points)))
-                Text("Listen. Play. Get Rewarded.")
+                Text("Help pick what plays on Coast.")
                     .font(.caption)
                     .foregroundStyle(Theme.textSecondary)
                     .lineLimit(1)
@@ -284,7 +281,6 @@ private struct RewardsBanner: View {
             .buttonStyle(PressableStyle())
         }
         .coastCard(cornerRadius: 20, padding: 12)
-        .animation(.spring, value: points)
     }
 }
 

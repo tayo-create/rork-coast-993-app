@@ -2,19 +2,17 @@ import Foundation
 
 nonisolated enum BackendError: LocalizedError {
     case notConfigured
-    case unauthorized
     case server(status: Int, message: String?)
 
     var errorDescription: String? {
         switch self {
         case .notConfigured: return "The Coast backend isn't configured."
-        case .unauthorized: return "Your session expired. Please sign in again."
         case .server(_, let message): return message ?? "Something went wrong. Please try again."
         }
     }
 }
 
-/// JSON client for the Coast 99.3 Cloudflare backend (accounts, rewards sync, keyword alerts).
+/// JSON client for the Coast 99.3 Cloudflare backend (keyword alerts).
 nonisolated enum BackendClient {
     private static let fallbackURL = "https://coast993-app-backend.rork.app"
 
@@ -33,16 +31,12 @@ nonisolated enum BackendClient {
         _ path: String,
         method: String = "GET",
         body: (any Encodable & Sendable)? = nil,
-        token: String? = nil,
         as type: Response.Type
     ) async throws -> Response {
         guard let baseURL else { throw BackendError.notConfigured }
         var request = URLRequest(url: baseURL.appending(path: path))
         request.httpMethod = method
         request.setValue("application/json", forHTTPHeaderField: "Accept")
-        if let token {
-            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-        }
         if let body {
             request.httpBody = try JSONEncoder().encode(body)
             request.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -51,7 +45,6 @@ nonisolated enum BackendClient {
         let (data, response) = try await session.data(for: request)
         let status = (response as? HTTPURLResponse)?.statusCode ?? -1
         guard (200..<300).contains(status) else {
-            if status == 401 { throw BackendError.unauthorized }
             let message = (try? JSONDecoder().decode(ServerMessage.self, from: data))?.error
             throw BackendError.server(status: status, message: message)
         }

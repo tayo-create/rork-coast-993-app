@@ -6,7 +6,7 @@ nonisolated enum StationAPIError: LocalizedError {
     var errorDescription: String? { "Couldn't reach Coast 99.3 right now." }
 }
 
-/// Network access for live metadata, contests and iTunes previews/artwork.
+/// Network access for live metadata and iTunes previews/artwork.
 nonisolated enum StationAPI {
     private static let session: URLSession = {
         let config = URLSessionConfiguration.default
@@ -25,21 +25,6 @@ nonisolated enum StationAPI {
         let (data, response) = try await session.data(from: StationConfig.nowPlayingURL)
         guard (response as? HTTPURLResponse)?.statusCode == 200 else { throw StationAPIError.badResponse }
         return try snakeDecoder().decode(AzuraNowPlayingResponse.self, from: data)
-    }
-
-    static func fetchContests() async throws -> [ContestDTO] {
-        var components = URLComponents(string: StationConfig.contestsBaseURL)
-        components?.queryItems = [
-            URLQueryItem(name: "select", value: "id,slug,title,prize,description,rules,image_url,starts_at,ends_at"),
-            URLQueryItem(name: "published", value: "eq.true"),
-            URLQueryItem(name: "order", value: "ends_at.asc")
-        ]
-        guard let url = components?.url else { throw StationAPIError.badResponse }
-        var request = URLRequest(url: url)
-        request.setValue(StationConfig.publishableKey, forHTTPHeaderField: "apikey")
-        let (data, response) = try await session.data(for: request)
-        guard (response as? HTTPURLResponse)?.statusCode == 200 else { throw StationAPIError.badResponse }
-        return try snakeDecoder().decode([ContestDTO].self, from: data)
     }
 
     static func searchITunes(term: String) async throws -> ITunesTrack? {

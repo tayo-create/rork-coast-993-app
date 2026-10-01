@@ -1,25 +1,5 @@
 import Foundation
 
-/// Signed-in Coast listener (from Rork Auth).
-nonisolated struct AccountUser: Codable, Hashable, Sendable {
-    let id: String
-    let email: String?
-    let name: String?
-    let picture: String?
-
-    var displayName: String {
-        if let name, !name.trimmingCharacters(in: .whitespaces).isEmpty { return name }
-        if let email, let handle = email.split(separator: "@").first { return String(handle) }
-        return "Coast Listener"
-    }
-
-    var initials: String {
-        let parts = displayName.split(separator: " ").prefix(2)
-        let letters = parts.compactMap { $0.first }.map { String($0) }.joined()
-        return letters.isEmpty ? "C" : letters.uppercased()
-    }
-}
-
 /// A contest keyword announced by the station.
 nonisolated struct KeywordAlert: Codable, Identifiable, Hashable, Sendable {
     let id: String
@@ -54,14 +34,6 @@ nonisolated struct KeywordAlert: Codable, Identifiable, Hashable, Sendable {
 }
 
 // MARK: - Backend DTOs
-
-nonisolated struct MeResponse: Decodable, Sendable {
-    let rewards: RewardsState?
-}
-
-nonisolated struct SyncResponse: Decodable, Sendable {
-    let rewards: RewardsState
-}
 
 nonisolated struct KeywordsResponse: Decodable, Sendable {
     let keywords: [KeywordAlert]
