@@ -1,4 +1,4 @@
-// Coast 99.3 backend: contest keyword push alerts + anonymous Music Test results.
+// Coast 99.3 backend: contest keyword push alerts. The Music Test is retired; past results stay readable in /admin.
 import { adminPage } from "./admin-page";
 import type { ApnsEnv } from "./apns";
 
@@ -73,9 +73,9 @@ export default {
         return toDO(env, "PushHub", "global", "/keywords", { method: "GET" });
       }
 
-      // ---- Anonymous Music Test answers ----
-      if (path === "/music-test" && request.method === "POST") {
-        return toDO(env, "PushHub", "global", "/music-test", { method: "POST", body: await request.text() });
+      // ---- Music Test retired: no new answers accepted ----
+      if (path === "/music-test") {
+        return json({ error: "The Music Test has ended." }, 410);
       }
 
       // ---- Push device registration (anonymous) ----

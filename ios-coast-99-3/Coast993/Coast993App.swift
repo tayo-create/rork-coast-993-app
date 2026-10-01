@@ -10,6 +10,15 @@ struct Coast993App: App {
 
     init() {
         CoastFont.registerFonts()
+        Self.removeLegacyMusicTestData()
+    }
+
+    /// The Music Test was retired; wipe any answers or ids it left in UserDefaults.
+    private static func removeLegacyMusicTestData() {
+        let defaults = UserDefaults.standard
+        for key in defaults.dictionaryRepresentation().keys where key.hasPrefix("coast.musictest.") {
+            defaults.removeObject(forKey: key)
+        }
     }
 
     var body: some Scene {

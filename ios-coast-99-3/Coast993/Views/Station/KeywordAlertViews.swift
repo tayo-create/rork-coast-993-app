@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Contests-tab card for the latest announced keyword, or an opt-in prompt when alerts are off.
+/// Station-tab card: the latest announced keyword, an opt-in prompt when alerts are off, or an "alerts on" status.
 struct KeywordAlertCard: View {
     @Environment(PushManager.self) private var push
     @Environment(AppRouter.self) private var router
@@ -16,7 +16,34 @@ struct KeywordAlertCard: View {
             .buttonStyle(PressableStyle(scale: 0.98))
         } else if !push.isReceivingAlerts {
             optIn
+        } else {
+            alertsOn
         }
+    }
+
+    private var alertsOn: some View {
+        @Bindable var push = push
+        return HStack(spacing: 14) {
+            Image(systemName: "bell.and.waves.left.and.right.fill")
+                .font(.system(size: 20, weight: .semibold))
+                .foregroundStyle(Theme.orange)
+                .frame(width: 48, height: 48)
+                .background(Circle().fill(Theme.orange.opacity(0.15)))
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Keyword alerts are on")
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(.white)
+                Text("We'll ping you the second a keyword drops.")
+                    .font(.caption)
+                    .foregroundStyle(Theme.textSecondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            Spacer(minLength: 8)
+            Toggle("Keyword alerts", isOn: $push.alertsEnabled)
+                .labelsHidden()
+                .tint(Theme.orange)
+        }
+        .coastCard(cornerRadius: 20, padding: 14)
     }
 
     private func liveKeyword(_ keyword: KeywordAlert) -> some View {

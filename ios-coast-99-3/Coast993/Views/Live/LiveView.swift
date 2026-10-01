@@ -4,6 +4,7 @@ struct LiveView: View {
     @Binding var selectedTab: AppTab
     @Environment(RadioPlayer.self) private var radio
     @Environment(ArtworkCache.self) private var artwork
+    @Environment(PushManager.self) private var push
 
     var body: some View {
         NavigationStack {
@@ -19,12 +20,16 @@ struct LiveView: View {
 
                         recentlyPlayed
 
-                        MusicTestBanner {
-                            selectedTab = .musicTest
+                        if !push.isReceivingAlerts {
+                            AlertsShortcutCard {
+                                selectedTab = .station
+                            }
+                            .transition(.opacity.combined(with: .scale(scale: 0.96)))
                         }
                     }
                     .padding(.horizontal, 16)
                     .padding(.bottom, 28)
+                    .animation(.smooth, value: push.isReceivingAlerts)
                 }
             }
             .scrollIndicators(.hidden)
@@ -248,39 +253,45 @@ struct TrackRow: View {
     }
 }
 
-private struct MusicTestBanner: View {
+/// Nudges listeners who haven't turned on keyword alerts over to the Station tab.
+private struct AlertsShortcutCard: View {
     let action: () -> Void
 
     var body: some View {
-        HStack(spacing: 14) {
-            ZStack {
-                Circle().fill(Theme.orange.opacity(0.18))
-                Image(systemName: "music.note.list")
-                    .font(.system(size: 22, weight: .semibold))
+        Button(action: action) {
+            HStack(spacing: 14) {
+                ZStack {
+                    Circle().fill(Theme.orange.opacity(0.18))
+                    Image(systemName: "bell.badge.fill")
+                        .font(.system(size: 22, weight: .semibold))
+                        .foregroundStyle(Theme.orange)
+                }
+                .frame(width: 52, height: 52)
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("KEYWORD ALERTS")
+                        .font(CoastFont.display(22))
+                        .foregroundStyle(.white)
+                    Text("Know the second a contest keyword drops.")
+                        .font(.caption)
+                        .foregroundStyle(Theme.textSecondary)
+                        .lineLimit(2)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+
+                Spacer(minLength: 4)
+
+                Image(systemName: "chevron.right")
+                    .font(.footnote.weight(.bold))
                     .foregroundStyle(Theme.orange)
+                    .frame(width: 36, height: 36)
+                    .background(Circle().fill(Theme.orange.opacity(0.15)))
             }
-            .frame(width: 52, height: 52)
-
-            VStack(alignment: .leading, spacing: 2) {
-                Text("YOUR VOICE")
-                    .font(CoastFont.display(22))
-                    .foregroundStyle(.white)
-                Text("Help pick what plays on Coast.")
-                    .font(.caption)
-                    .foregroundStyle(Theme.textSecondary)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.8)
-            }
-
-            Spacer(minLength: 4)
-
-            Button(action: action) {
-                PrimaryCapsuleLabel(title: "Take the Music Test", height: 44)
-                    .fixedSize()
-            }
-            .buttonStyle(PressableStyle())
+            .coastCard(cornerRadius: 20, padding: 12)
         }
-        .coastCard(cornerRadius: 20, padding: 12)
+        .buttonStyle(PressableStyle(scale: 0.98))
+        .accessibilityLabel("Keyword alerts")
+        .accessibilityHint("Opens the Station tab to turn on alerts")
     }
 }
 

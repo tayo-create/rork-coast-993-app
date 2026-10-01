@@ -44,7 +44,7 @@ export const adminPage = `<!doctype html>
 <body>
 <main>
   <h1>Coast <span>99.3</span></h1>
-  <p class="sub">Keyword Alerts &amp; Music Test results.</p>
+  <p class="sub">Keyword Alerts &amp; past Music Test results.</p>
 
   <div class="card">
     <label for="key">Admin key</label>
@@ -77,7 +77,7 @@ export const adminPage = `<!doctype html>
   </div>
 
   <div class="card">
-    <label style="margin-top:0">Music Test results</label>
+    <label style="margin-top:0">Music Test results (archived, closed to new answers)</label>
     <table>
       <thead><tr><th>Song</th><th style="text-align:right">Score</th><th style="text-align:right">Like</th><th style="text-align:right">More</th></tr></thead>
       <tbody id="music"><tr><td colspan="4"><small>Enter your admin key to load.</small></td></tr></tbody>

@@ -12,11 +12,8 @@ struct ContentView: View {
             Tab("Live", systemImage: "dot.radiowaves.left.and.right", value: AppTab.live) {
                 LiveView(selectedTab: $router.selectedTab)
             }
-            Tab("Music Test", systemImage: "music.note", value: AppTab.musicTest) {
-                MusicTestView(selectedTab: $router.selectedTab)
-            }
-            Tab("Contests", systemImage: "trophy.fill", value: AppTab.contests) {
-                ContestsView()
+            Tab("Station", systemImage: "antenna.radiowaves.left.and.right", value: AppTab.station) {
+                StationView()
             }
         }
         .tint(Theme.orange)
@@ -28,7 +25,7 @@ struct ContentView: View {
         }
         .onChange(of: push.openedKeyword) { _, keyword in
             guard let keyword else { return }
-            router.selectedTab = .contests
+            router.selectedTab = .station
             router.presentedKeyword = keyword
             push.openedKeyword = nil
         }
