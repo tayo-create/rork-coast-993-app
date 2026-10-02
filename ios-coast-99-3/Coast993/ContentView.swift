@@ -31,6 +31,7 @@ struct ContentView: View {
         }
         .onChange(of: scenePhase) { _, phase in
             guard phase == .active else { return }
+            radio.appDidBecomeActive()
             Task {
                 await push.refreshPermission()
                 await push.fetchKeywords()

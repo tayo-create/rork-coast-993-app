@@ -160,7 +160,7 @@ private struct PlayerControls: View {
                             .frame(width: 84, height: 84)
                             .overlay(Circle().strokeBorder(.white.opacity(0.25), lineWidth: 1))
                             .shadow(color: Theme.orange.opacity(0.6), radius: 18, y: 6)
-                        if radio.status == .connecting {
+                        if radio.isBuffering {
                             ProgressView()
                                 .tint(.white)
                                 .controlSize(.large)
@@ -197,6 +197,7 @@ private struct PlayerControls: View {
         switch radio.status {
         case .idle: "TAP TO LISTEN LIVE"
         case .connecting: "TUNING IN…"
+        case .reconnecting: radio.isNetworkAvailable ? "RECONNECTING…" : "WAITING FOR CONNECTION…"
         case .playing:
             if let count = radio.listenerCount, count > 1 { "LIVE · \(count) LISTENING NOW" } else { "LIVE ON COAST 99.3" }
         case .failed: "STREAM UNAVAILABLE — TAP TO RETRY"
