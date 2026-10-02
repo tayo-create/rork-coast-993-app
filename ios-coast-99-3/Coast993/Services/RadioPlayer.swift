@@ -9,7 +9,10 @@ import UIKit
 /// Built to keep playing in the background: it recovers from dropped connections, stalls,
 /// phone calls / Siri interruptions, network changes and media-server resets.
 @Observable
-final class RadioPlayer {
+final class RadioPlayer: RadioRemoteControllable {
+    /// One player for the whole process, so widget / Control Center taps reach the same stream.
+    static let shared: RadioPlayer = RadioPlayer()
+
     enum Status: Equatable {
         case idle, connecting, playing, reconnecting, failed
     }
@@ -38,6 +41,7 @@ final class RadioPlayer {
     @ObservationIgnored private let logoArtwork: MPMediaItemArtwork?
     @ObservationIgnored private var nowPlayingArtwork: MPMediaItemArtwork?
     @ObservationIgnored private var hasConfiguredSystem: Bool = false
+    @ObservationIgnored private var lastWidgetState: RadioWidgetState?
 
     /// The listener's intent. Stays true through drops so we keep reconnecting until they press pause.
     @ObservationIgnored private var wantsToPlay: Bool = false
@@ -55,6 +59,11 @@ final class RadioPlayer {
         }
         nowPlayingArtwork = logoArtwork
         startNetworkMonitor()
+        // A fresh process is never playing; clear state left behind if the app was killed mid-stream.
+        var restored = RadioShared.load()
+        restored.isPlaying = false
+        restored.isBuffering = false
+        publishWidgetState(restored)
     }
 
     // MARK: - Metadata polling
@@ -481,5 +490,23 @@ final class RadioPlayer {
             info[MPMediaItemPropertyArtwork] = nowPlayingArtwork
         }
         MPNowPlayingInfoCenter.default().nowPlayingInfo = info
+        publishWidgetState()
+    }
+
+    // MARK: - Widgets
+
+    /// Mirrors play state + current song to the widgets and Control Center control (only when it changes).
+    private func publishWidgetState(_ override: RadioWidgetState? = nil) {
+        let state = override ?? RadioWidgetState(
+            isPlaying: isPlaying,
+            isBuffering: isBuffering,
+            title: nowPlaying?.title,
+            artist: nowPlaying?.artist,
+            updatedAt: .now
+        )
+        if let lastWidgetState, lastWidgetState.hasSameContent(as: state) { return }
+        lastWidgetState = state
+        RadioShared.save(state)
+        RadioShared.reloadWidgets()
     }
 }

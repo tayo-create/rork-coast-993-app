@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		XXA4F62407DAE5BC193D26XX /* Coast993Widget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = XX3D8594550C3F8E2F9681XX /* Coast993Widget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		105FC58A2E9EAD3200EA8BCF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -21,13 +25,45 @@
 			remoteGlobalIDString = 105FC5792E9EAD3100EA8BCF;
 			remoteInfo = Coast993;
 		};
+		XXC5D76EC064B769A28995XX /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 105FC5722E9EAD3100EA8BCF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = XXBAD597DC5A52F820D71BXX;
+			remoteInfo = Coast993Widget;
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		XX8618DA762832199DA68BXX /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				XXA4F62407DAE5BC193D26XX /* Coast993Widget.appex in Embed Foundation Extensions */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			name = "Embed Foundation Extensions";
+			dstPath = "";
+			dstSubfolderSpec = 13;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		105FC57A2E9EAD3100EA8BCF /* Coast993.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Coast993.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		105FC5892E9EAD3200EA8BCF /* Coast993Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Coast993Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		105FC5932E9EAD3200EA8BCF /* Coast993UITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Coast993UITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		XX3D8594550C3F8E2F9681XX /* Coast993Widget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = Coast993Widget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		XXC55975C41B3CB1977264XX /* Exceptions for "Coast993Widget" folder in "Coast993Widget" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = XXBAD597DC5A52F820D71BXX /* Coast993Widget */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		105FC57C2E9EAD3100EA8BCF /* Coast993 */ = {
@@ -44,6 +80,19 @@
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = Coast993UITests;
 			sourceTree = "<group>";
+		};
+		AA5A4ED0C0A5700000000001 /* Shared */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Shared;
+			sourceTree = "<group>";
+		};
+		XX9EDC0D5B1FBF0B30B04CXX /* Coast993Widget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Coast993Widget;
+			sourceTree = "<group>";
+			exceptions = (
+				XXC55975C41B3CB1977264XX /* Exceptions for "Coast993Widget" folder in "Coast993Widget" target */,
+			);
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
@@ -69,6 +118,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		XX8773163DF2DE0BDCD00BXX /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -79,6 +135,8 @@
 				105FC58C2E9EAD3200EA8BCF /* Coast993Tests */,
 				105FC5962E9EAD3200EA8BCF /* Coast993UITests */,
 				105FC57B2E9EAD3100EA8BCF /* Products */,
+				XX9EDC0D5B1FBF0B30B04CXX /* Coast993Widget */,
+				AA5A4ED0C0A5700000000001 /* Shared */,
 			);
 			sourceTree = "<group>";
 		};
@@ -88,6 +146,7 @@
 				105FC57A2E9EAD3100EA8BCF /* Coast993.app */,
 				105FC5892E9EAD3200EA8BCF /* Coast993Tests.xctest */,
 				105FC5932E9EAD3200EA8BCF /* Coast993UITests.xctest */,
+				XX3D8594550C3F8E2F9681XX /* Coast993Widget.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -102,13 +161,16 @@
 				105FC5762E9EAD3100EA8BCF /* Sources */,
 				105FC5772E9EAD3100EA8BCF /* Frameworks */,
 				105FC5782E9EAD3100EA8BCF /* Resources */,
+				XX8618DA762832199DA68BXX /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				XX7DCD72026AFEA90BC8F1XX /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				105FC57C2E9EAD3100EA8BCF /* Coast993 */,
+				AA5A4ED0C0A5700000000001 /* Shared */,
 			);
 			name = Coast993;
 			packageProductDependencies = (
@@ -163,6 +225,27 @@
 			productReference = 105FC5932E9EAD3200EA8BCF /* Coast993UITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		XXBAD597DC5A52F820D71BXX /* Coast993Widget */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = XXA4833F8847E1D7060320XX /* Build configuration list for PBXNativeTarget "Coast993Widget" */;
+			buildPhases = (
+				XX7CC18275BD349B59BEAEXX /* Sources */,
+				XX8773163DF2DE0BDCD00BXX /* Frameworks */,
+				XX605ACB9A5B4F6F396C75XX /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Coast993Widget;
+			productName = Coast993Widget;
+			productReference = XX3D8594550C3F8E2F9681XX /* Coast993Widget.appex */;
+			productType = "com.apple.product-type.app-extension";
+			fileSystemSynchronizedGroups = (
+				XX9EDC0D5B1FBF0B30B04CXX /* Coast993Widget */,
+				AA5A4ED0C0A5700000000001 /* Shared */,
+			);
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -203,6 +286,7 @@
 				105FC5792E9EAD3100EA8BCF /* Coast993 */,
 				105FC5882E9EAD3200EA8BCF /* Coast993Tests */,
 				105FC5922E9EAD3200EA8BCF /* Coast993UITests */,
+				XXBAD597DC5A52F820D71BXX /* Coast993Widget */,
 			);
 		};
 /* End PBXProject section */
@@ -223,6 +307,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		105FC5912E9EAD3200EA8BCF /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		XX605ACB9A5B4F6F396C75XX /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -253,6 +344,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		XX7CC18275BD349B59BEAEXX /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -265,6 +363,11 @@
 			isa = PBXTargetDependency;
 			target = 105FC5792E9EAD3100EA8BCF /* Coast993 */;
 			targetProxy = 105FC5942E9EAD3200EA8BCF /* PBXContainerItemProxy */;
+		};
+		XX7DCD72026AFEA90BC8F1XX /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = XXBAD597DC5A52F820D71BXX /* Coast993Widget */;
+			targetProxy = XXC5D76EC064B769A28995XX /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -472,7 +575,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "app.rork.3yg97ylru9najufvpglu9.tests";
+				PRODUCT_BUNDLE_IDENTIFIER = app.rork.3yg97ylru9najufvpglu9.tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -494,7 +597,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "app.rork.3yg97ylru9najufvpglu9.tests";
+				PRODUCT_BUNDLE_IDENTIFIER = app.rork.3yg97ylru9najufvpglu9.tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -514,7 +617,7 @@
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "app.rork.3yg97ylru9najufvpglu9.uitests";
+				PRODUCT_BUNDLE_IDENTIFIER = app.rork.3yg97ylru9najufvpglu9.uitests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -534,7 +637,7 @@
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "app.rork.3yg97ylru9najufvpglu9.uitests";
+				PRODUCT_BUNDLE_IDENTIFIER = app.rork.3yg97ylru9najufvpglu9.uitests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -543,6 +646,62 @@
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = Coast993;
+			};
+			name = Release;
+		};
+		XX0F36E831FE2A397D7509XX /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_BUNDLE_IDENTIFIER = app.rork.3yg97ylru9najufvpglu9.coast993widget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Coast993Widget/Info.plist;
+				SWIFT_VERSION = 5.0;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				MARKETING_VERSION = 1.0.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				INFOPLIST_KEY_CFBundleDisplayName = "Coast 99.3";
+				CODE_SIGN_ENTITLEMENTS = Coast993Widget/Coast993Widget.entitlements;
+				DEVELOPMENT_TEAM = "";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+			};
+			name = Debug;
+		};
+		XXD19202B1CA8C3017B9A6XX /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_BUNDLE_IDENTIFIER = app.rork.3yg97ylru9najufvpglu9.coast993widget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Coast993Widget/Info.plist;
+				SWIFT_VERSION = 5.0;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				MARKETING_VERSION = 1.0.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				INFOPLIST_KEY_CFBundleDisplayName = "Coast 99.3";
+				CODE_SIGN_ENTITLEMENTS = Coast993Widget/Coast993Widget.entitlements;
+				DEVELOPMENT_TEAM = "";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 			};
 			name = Release;
 		};
@@ -581,6 +740,15 @@
 			buildConfigurations = (
 				105FC5A42E9EAD3200EA8BCF /* Debug */,
 				105FC5A52E9EAD3200EA8BCF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		XXA4833F8847E1D7060320XX /* Build configuration list for PBXNativeTarget "Coast993Widget" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				XX0F36E831FE2A397D7509XX /* Debug */,
+				XXD19202B1CA8C3017B9A6XX /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

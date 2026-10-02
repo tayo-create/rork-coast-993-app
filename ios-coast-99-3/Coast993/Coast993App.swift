@@ -3,7 +3,7 @@ import SwiftUI
 @main
 struct Coast993App: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
-    @State private var radio: RadioPlayer = RadioPlayer()
+    @State private var radio: RadioPlayer = RadioPlayer.shared
     @State private var artwork: ArtworkCache = ArtworkCache()
     @State private var router: AppRouter = AppRouter()
     @State private var push: PushManager = PushManager.shared
@@ -11,6 +11,7 @@ struct Coast993App: App {
     init() {
         CoastFont.registerFonts()
         Self.removeLegacyMusicTestData()
+        RadioRemote.handler = RadioPlayer.shared
     }
 
     /// The Music Test was retired; wipe any answers or ids it left in UserDefaults.
