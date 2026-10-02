@@ -1,0 +1,74 @@
+{
+  "appContext": {
+    "appName": "Coast 99.3",
+    "category": "local FM radio station streaming app (Savannah, GA — Hip Hop, R&B and Throwbacks)",
+    "summary": "The official app for Coast 99.3 in Savannah. Listeners stream the station live with background and Lock Screen playback, see the current song with album art and an LED equalizer, browse recently played songs, and get push alerts when a contest keyword drops on air.",
+    "domainKeywords": [
+      "live radio",
+      "Savannah",
+      "Hip Hop",
+      "R&B",
+      "Throwbacks",
+      "now playing",
+      "recently played",
+      "keyword alerts",
+      "push notifications",
+      "Talmadge bridge at night",
+      "LED equalizer",
+      "Lowcountry"
+    ],
+    "forbiddenInterpretations": [
+      "podcast app",
+      "music streaming service like Spotify with playlists or on-demand songs",
+      "social network",
+      "rewards or points app",
+      "dating app",
+      "concert ticketing app"
+    ]
+  },
+  "theme": {
+    "style": "Savannah after dark, with deep midnight navy skies, an electric-blue glow like a lit cable-stayed bridge over the river, and hot sodium-orange city warmth low on the horizon. The light is cinematic and nocturnal, with soft haze over the water, luminous reflections, fine grain, and long-exposure streaks. It feels energetic, confident and proud of the Lowcountry, like a radio station rather than a generic dark gradient. Backgrounds are bold but stay dark and calm at the top so the white headlines read clearly. The contest slide flips to a blazing orange for urgency.",
+    "headlineFont": "font-family: 'Archivo', sans-serif; weight 800; @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@800;900&display=swap')",
+    "headlineFontSize": 132,
+    "mockupIds": {
+      "iphone": "deep-blue",
+      "ipad": "space-gray"
+    },
+    "palette": {
+      "primary": "#050A1A",
+      "secondary": "#1F6BFF",
+      "accent": "#FF7A1A"
+    },
+    "layoutId": "hero-clipped"
+  },
+  "slides": [
+    {
+      "label": "Live Player",
+      "backgroundPrompt": "Cinematic nocturnal abstract scene on a deep midnight navy #050A1A base, with a towering column of electric blue #1F6BFF light rising from the lower center in soft volumetric rays and thin luminous diagonal cables of light fanning outward, plus a gentle hot orange #FF7A1A glow pooling in the lower right corner. Hazy atmospheric depth, faint grain texture and a soft bloom on the light edges, with the upper 30% fading to calm near-black navy. 8K quality, ultra smooth gradients, premium feel, no text, no letters, no UI elements, no device mockups",
+      "backgroundUrl": "https://r2-pub.rork.com/app-store-screenshots/aa7528c0-c2f6-488c-9eb7-fd3c90d8a43d.png"
+    },
+    {
+      "label": "Recently Played",
+      "backgroundPrompt": "Photorealistic long-exposure abstract of a dark river surface at night: a wide horizontal horizon glow blends from electric blue #1F6BFF on the left to warm hot orange #FF7A1A on the right over a deep midnight navy #050A1A sky. Shimmering vertical light reflections ripple across the water in the lower half under soft diffused low-angle lighting, with gentle mist, a subtle bokeh blur at the edges and a calm, dark empty upper third. 8K quality, ultra smooth gradients, premium feel, no text, no letters, no UI elements, no device mockups",
+      "backgroundUrl": "https://r2-pub.rork.com/app-store-screenshots/0d6746f7-0862-4d69-b86a-6f6083c67d2c.png"
+    },
+    {
+      "label": "Keyword Alerts",
+      "backgroundPrompt": "Bold abstract digital art in a blazing hot orange #FF7A1A to deep burnt orange #F25C05 gradient, with large soft concentric waves of light radiating outward from the lower center like a pulse. A soft midnight navy #050A1A vignette darkens the corners, and the light is a bright glow from within, with smooth satin texture and fine grain. The upper 30% is a calmer, slightly deeper orange for headline contrast. 8K quality, ultra smooth gradients, premium feel, no text, no letters, no UI elements, no device mockups",
+      "backgroundUrl": "https://r2-pub.rork.com/app-store-screenshots/32e03987-2db2-4243-b064-8216de3c2f68.png"
+    },
+    {
+      "label": "Background Listening",
+      "backgroundPrompt": "Cinematic long-exposure night scene abstraction on a midnight navy #050A1A base, with sweeping curved streaks of electric blue #1F6BFF light racing diagonally from the lower left toward the right edge and thin hot orange #FF7A1A streaks woven between them. The motion blur suggests speed, with dramatic rim lighting along the streaks, faint misty haze and a shallow depth-of-field blur on the far edges, while the upper 30% stays dark and uncluttered. 8K quality, ultra smooth gradients, premium feel, no text, no letters, no UI elements, no device mockups",
+      "backgroundUrl": "https://r2-pub.rork.com/app-store-screenshots/05162f2e-662a-4319-8fb5-b797bc4874d9.png"
+    }
+  ],
+  "headlines": {
+    "en": {
+      "Live Player": "Savannah<br>Live <span style=\"color:#FF7A1A\">Now</span>",
+      "Recently Played": "Name That<br><span style=\"color:#FF7A1A\">Song</span>",
+      "Keyword Alerts": "Never Miss<br>A <span style=\"color:#050A1A\">Keyword</span>",
+      "Background Listening": "Keeps <span style=\"color:#FF7A1A\">Playing</span>"
+    }
+  }
+}

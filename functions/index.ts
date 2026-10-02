@@ -1,5 +1,6 @@
 // Coast 99.3 backend: contest keyword push alerts. The Music Test is retired; past results stay readable in /admin.
 import { adminPage } from "./admin-page";
+import { privacyPage, supportPage } from "./legal-pages";
 import type { ApnsEnv } from "./apns";
 
 export { PushHub } from "./push-hub";
@@ -68,6 +69,13 @@ export default {
     try {
       // ---- Public ----
       if (path === "/ping") return json({ ok: true, now: new Date().toISOString() });
+
+      if (path === "/privacy" && request.method === "GET") {
+        return new Response(privacyPage, { headers: { "Content-Type": "text/html; charset=utf-8" } });
+      }
+      if (path === "/support" && request.method === "GET") {
+        return new Response(supportPage, { headers: { "Content-Type": "text/html; charset=utf-8" } });
+      }
 
       if (path === "/keywords" && request.method === "GET") {
         return toDO(env, "PushHub", "global", "/keywords", { method: "GET" });

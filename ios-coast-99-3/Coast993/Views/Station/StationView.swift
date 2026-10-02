@@ -29,6 +29,8 @@ struct StationView: View {
                         ContestsSoonRow()
                         websiteRow
                     }
+
+                    legalFooter
                 }
                 .padding(.horizontal, 16)
                 .padding(.top, -6)
@@ -48,30 +50,47 @@ struct StationView: View {
     private var socialRow: some View {
         VStack(spacing: 12) {
             SectionTitle(title: "Follow Coast")
-            HStack(spacing: 14) {
-                ForEach(StationConfig.socialLinks) { link in
-                    Button {
-                        safariURL = link.url
-                    } label: {
-                        VStack(spacing: 6) {
-                            Image(systemName: link.systemImage)
-                                .font(.system(size: 22, weight: .semibold))
+            ForEach(StationConfig.socialLinks) { link in
+                Button {
+                    safariURL = link.url
+                } label: {
+                    HStack(spacing: 14) {
+                        Image(systemName: link.systemImage)
+                            .font(.system(size: 20, weight: .semibold))
+                            .foregroundStyle(.white)
+                            .frame(width: 48, height: 48)
+                            .background(Circle().fill(Theme.orangeGradient))
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(link.handle)
+                                .font(.subheadline.weight(.semibold))
                                 .foregroundStyle(.white)
-                                .frame(width: 58, height: 58)
-                                .background(Circle().fill(Theme.surfaceRaised))
-                                .overlay(Circle().strokeBorder(Theme.blue.opacity(0.5), lineWidth: 1))
-                            Text(link.name)
-                                .font(.caption2.weight(.semibold))
+                            Text("Coast 99.3 on \(link.name)")
+                                .font(.caption)
                                 .foregroundStyle(Theme.textSecondary)
-                                .lineLimit(1)
                         }
+                        Spacer(minLength: 8)
+                        Image(systemName: "arrow.up.right")
+                            .font(.footnote.weight(.bold))
+                            .foregroundStyle(Theme.textSecondary)
                     }
-                    .buttonStyle(PressableStyle(scale: 0.92))
-                    .accessibilityLabel("Open Coast 99.3 on \(link.name)")
+                    .coastCard(cornerRadius: 20, padding: 14)
                 }
-                Spacer(minLength: 0)
+                .buttonStyle(PressableStyle(scale: 0.98))
+                .accessibilityLabel("Open Coast 99.3 on \(link.name), \(link.handle)")
             }
         }
+    }
+
+    private var legalFooter: some View {
+        HStack(spacing: 18) {
+            Button("Privacy Policy") { safariURL = StationConfig.privacyURL }
+            Text("·").foregroundStyle(Theme.textSecondary.opacity(0.6))
+            Button("Support") { safariURL = StationConfig.supportURL }
+        }
+        .font(.footnote.weight(.medium))
+        .tint(Theme.textSecondary)
+        .frame(maxWidth: .infinity, minHeight: 44)
+        .padding(.top, 4)
     }
 
     private var websiteRow: some View {
